@@ -25,7 +25,7 @@ const defaultWorkspace = "default"
 //go:generate counterfeiter . Client
 
 type Client interface {
-	InitWithBackend() error
+	InitWithBackend(string) error
 	InitWithoutBackend() error
 	Apply() error
 	Destroy() error
@@ -66,7 +66,7 @@ func NewClient(model models.Terraform, logWriter io.Writer) Client {
 	}
 }
 
-func (c *client) InitWithBackend() error {
+func (c *client) InitWithBackend(envName string) error {
 	if err := c.writeBackendOverride(c.model.Source); err != nil {
 		return err
 	}
@@ -86,7 +86,7 @@ func (c *client) InitWithBackend() error {
 		initArgs = append(initArgs, fmt.Sprintf("-plugin-dir=%s", c.model.PluginDir))
 	}
 
-	initCmd, err := c.terraformCmd(initArgs, nil)
+	initCmd, err := c.terraformCmd(initArgs, []string{fmt.Sprintf("TF_WORKSPACE=%s", envName)})
 	if err != nil {
 		return err
 	}
@@ -791,7 +791,7 @@ func (c *client) SavePlanToBackend(planEnvName string) error {
 		return fmt.Errorf(errPrefix, logPath, err)
 	}
 
-	err = c.InitWithBackend()
+	err = c.InitWithBackend(planEnvName)
 	if err != nil {
 		return fmt.Errorf(errPrefix, logPath, err)
 	}

@@ -3,6 +3,7 @@ package namerfakes
 
 import (
 	"sync"
+
 	"github.com/ljfranklin/terraform-resource/namer"
 )
 
@@ -26,15 +27,16 @@ func (fake *FakeNamer) RandomName() string {
 	ret, specificReturn := fake.randomNameReturnsOnCall[len(fake.randomNameArgsForCall)]
 	fake.randomNameArgsForCall = append(fake.randomNameArgsForCall, struct {
 	}{})
+	stub := fake.RandomNameStub
+	fakeReturns := fake.randomNameReturns
 	fake.recordInvocation("RandomName", []interface{}{})
 	fake.randomNameMutex.Unlock()
-	if fake.RandomNameStub != nil {
-		return fake.RandomNameStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.randomNameReturns
 	return fakeReturns.result1
 }
 

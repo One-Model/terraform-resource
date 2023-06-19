@@ -252,7 +252,7 @@ func (a *Action) setup() error {
 		return err
 	}
 
-	if err := a.Client.InitWithBackend(); err != nil {
+	if err := a.Client.InitWithBackend(a.EnvName); err != nil {
 		return err
 	}
 

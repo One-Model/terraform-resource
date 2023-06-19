@@ -106,7 +106,7 @@ func (r Runner) inWithBackend(req models.InRequest, tmpDir string) (models.InRes
 		r.LogWriter,
 	)
 
-	if err := client.InitWithBackend(); err != nil {
+	if err := client.InitWithBackend("default"); err != nil {
 		return models.InResponse{}, err
 	}
 

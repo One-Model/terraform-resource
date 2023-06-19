@@ -52,7 +52,7 @@ func (b BackendEnvNamer) EnvName() (string, error) {
 }
 
 func (b BackendEnvNamer) generateRandomName() (string, error) {
-	if err := b.TerraformClient.InitWithBackend(); err != nil {
+	if err := b.TerraformClient.InitWithBackend("default"); err != nil {
 		return "", err
 	}
 
@@ -105,7 +105,7 @@ func (m MigratedFromStorageEnvNamer) EnvName() (string, error) {
 }
 
 func (m MigratedFromStorageEnvNamer) generateRandomName() (string, error) {
-	if err := m.TerraformClient.InitWithBackend(); err != nil {
+	if err := m.TerraformClient.InitWithBackend("default"); err != nil {
 		return "", err
 	}
 
