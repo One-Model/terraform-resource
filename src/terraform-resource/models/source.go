@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+
 	"github.com/ljfranklin/terraform-resource/storage"
 )
 
@@ -9,7 +10,9 @@ type Source struct {
 	Terraform
 	Storage             storage.Model `json:"storage,omitempty"`               // optional
 	MigratedFromStorage storage.Model `json:"migrated_from_storage,omitempty"` // optional
-	EnvName             string        `json:"env_name,omitempty"`              // optional
+
+	EnvName     string `json:"env_name,omitempty"`      // optional
+	InitEnvName string `json:"init_env_name,omitempty"` // optional
 }
 
 func (s Source) Validate() error {

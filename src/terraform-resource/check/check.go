@@ -80,7 +80,7 @@ func (r Runner) runWithBackend(req models.InRequest) ([]models.Version, error) {
 	} else {
 		targetEnvName = req.Version.EnvName
 	}
-	latestVersion, err := workspaces.LatestVersionForEnv(targetEnvName)
+	latestVersion, err := workspaces.LatestVersionForEnv(req.Source.InitEnvName, targetEnvName)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to check backend for latest version of '%s': %s", targetEnvName, err)
 	}

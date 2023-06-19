@@ -44,7 +44,7 @@ type Client interface {
 	WorkspaceDeleteWithForce(string) error
 	StatePull(string) ([]byte, error)
 	CurrentStateVersion(string) (StateVersion, error)
-	SavePlanToBackend(string) error
+	SavePlanToBackend(string, string) error
 	GetPlanFromBackend(string) error
 	SetModel(models.Terraform)
 }
@@ -66,7 +66,7 @@ func NewClient(model models.Terraform, logWriter io.Writer) Client {
 	}
 }
 
-func (c *client) InitWithBackend(envName string) error {
+func (c *client) InitWithBackend(initEnvName string) error {
 	if err := c.writeBackendOverride(c.model.Source); err != nil {
 		return err
 	}
@@ -86,7 +86,12 @@ func (c *client) InitWithBackend(envName string) error {
 		initArgs = append(initArgs, fmt.Sprintf("-plugin-dir=%s", c.model.PluginDir))
 	}
 
-	initCmd, err := c.terraformCmd(initArgs, []string{fmt.Sprintf("TF_WORKSPACE=%s", envName)})
+	var envVars []string
+	if initEnvName != "" {
+		envVars = append(envVars, fmt.Sprintf("TF_WORKSPACE=%s", initEnvName))
+	}
+
+	initCmd, err := c.terraformCmd(initArgs, envVars)
 	if err != nil {
 		return err
 	}
@@ -739,7 +744,7 @@ func (c *client) CurrentStateVersion(envName string) (StateVersion, error) {
 	}, nil
 }
 
-func (c *client) SavePlanToBackend(planEnvName string) error {
+func (c *client) SavePlanToBackend(initEnvName, planEnvName string) error {
 	planContents, err := ioutil.ReadFile(c.model.PlanFileLocalPath)
 	if err != nil {
 		return err
@@ -791,7 +796,7 @@ func (c *client) SavePlanToBackend(planEnvName string) error {
 		return fmt.Errorf(errPrefix, logPath, err)
 	}
 
-	err = c.InitWithBackend(planEnvName)
+	err = c.InitWithBackend(initEnvName)
 	if err != nil {
 		return fmt.Errorf(errPrefix, logPath, err)
 	}

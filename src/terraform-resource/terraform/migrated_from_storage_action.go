@@ -3,17 +3,19 @@ package terraform
 import (
 	"fmt"
 	"strconv"
+
 	"github.com/ljfranklin/terraform-resource/logger"
 	"github.com/ljfranklin/terraform-resource/models"
 	"github.com/ljfranklin/terraform-resource/storage"
 )
 
 type MigratedFromStorageAction struct {
-	Client    Client
-	Model     models.Terraform
-	Logger    logger.Logger
-	EnvName   string
-	StateFile storage.StateFile
+	Client      Client
+	Model       models.Terraform
+	Logger      logger.Logger
+	InitEnvName string
+	EnvName     string
+	StateFile   storage.StateFile
 }
 
 func (a *MigratedFromStorageAction) Apply() (Result, error) {
@@ -278,7 +280,7 @@ func (a *MigratedFromStorageAction) attemptPlan() (Result, error) {
 		return Result{}, err
 	}
 
-	if err := a.Client.SavePlanToBackend(a.planNameForEnv()); err != nil {
+	if err := a.Client.SavePlanToBackend(a.InitEnvName, a.planNameForEnv()); err != nil {
 		return Result{}, err
 	}
 
@@ -304,7 +306,7 @@ func (a *MigratedFromStorageAction) setup() error {
 		return err
 	}
 
-	if err := a.Client.InitWithBackend(a.EnvName); err != nil {
+	if err := a.Client.InitWithBackend(a.InitEnvName); err != nil {
 		return err
 	}
 

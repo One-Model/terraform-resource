@@ -8,16 +8,18 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
 	"github.com/ljfranklin/terraform-resource/logger"
 	"github.com/ljfranklin/terraform-resource/models"
 )
 
 type Action struct {
-	Client    Client
-	Model     models.Terraform
-	Logger    logger.Logger
-	EnvName   string
-	SourceDir string
+	Client      Client
+	Model       models.Terraform
+	Logger      logger.Logger
+	InitEnvName string
+	EnvName     string
+	SourceDir   string
 }
 
 type Result struct {
@@ -226,7 +228,7 @@ func (a *Action) attemptPlan() (Result, error) {
 		return Result{}, err
 	}
 
-	if err = a.Client.SavePlanToBackend(a.planNameForEnv()); err != nil {
+	if err = a.Client.SavePlanToBackend(a.InitEnvName, a.planNameForEnv()); err != nil {
 		return Result{}, err
 	}
 
@@ -252,7 +254,7 @@ func (a *Action) setup() error {
 		return err
 	}
 
-	if err := a.Client.InitWithBackend(a.EnvName); err != nil {
+	if err := a.Client.InitWithBackend(a.InitEnvName); err != nil {
 		return err
 	}
 

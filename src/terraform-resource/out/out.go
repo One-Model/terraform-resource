@@ -93,9 +93,10 @@ func (r Runner) runWithBackend(req models.OutRequest, terraformModel models.Terr
 	)
 
 	action := terraform.Action{
-		Client:  client,
-		EnvName: envName,
-		Model:   terraformModel,
+		Client:      client,
+		InitEnvName: req.Source.InitEnvName,
+		EnvName:     envName,
+		Model:       terraformModel,
 		Logger: logger.Logger{
 			Sink: r.LogWriter,
 		},
@@ -252,10 +253,11 @@ func (r Runner) runWithMigratedFromStorage(req models.OutRequest, terraformModel
 		StorageDriver: storageDriver,
 	}
 	action := terraform.MigratedFromStorageAction{
-		StateFile: stateFile,
-		Client:    client,
-		EnvName:   envName,
-		Model:     terraformModel,
+		StateFile:   stateFile,
+		Client:      client,
+		InitEnvName: req.Source.InitEnvName,
+		EnvName:     envName,
+		Model:       terraformModel,
 		Logger: logger.Logger{
 			Sink: r.LogWriter,
 		},

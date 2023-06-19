@@ -2,6 +2,7 @@ package workspaces_test
 
 import (
 	"errors"
+
 	"github.com/ljfranklin/terraform-resource/terraform"
 	"github.com/ljfranklin/terraform-resource/terraform/terraformfakes"
 	"github.com/ljfranklin/terraform-resource/workspaces"
@@ -25,7 +26,7 @@ var _ = Describe("Workspaces", func() {
 			It("returns an empty Version", func() {
 				spaces := workspaces.New(fakeTerraform)
 
-				version, err := spaces.LatestVersionForEnv("missing-env")
+				version, err := spaces.LatestVersionForEnv("default", "missing-env")
 				Expect(err).To(BeNil())
 				Expect(version).To(Equal(terraform.StateVersion{}))
 			})
@@ -44,7 +45,7 @@ var _ = Describe("Workspaces", func() {
 			It("returns a Version with the given serial number", func() {
 				spaces := workspaces.New(fakeTerraform)
 
-				version, err := spaces.LatestVersionForEnv("some-env")
+				version, err := spaces.LatestVersionForEnv("default", "some-env")
 				Expect(err).To(BeNil())
 				Expect(version).To(Equal(terraform.StateVersion{
 					Serial:  7,
@@ -62,7 +63,7 @@ var _ = Describe("Workspaces", func() {
 			It("returns the error", func() {
 				spaces := workspaces.New(fakeTerraform)
 
-				_, err := spaces.LatestVersionForEnv("some-env")
+				_, err := spaces.LatestVersionForEnv("default", "some-env")
 				Expect(err).To(MatchError("some-error"))
 			})
 		})
@@ -76,7 +77,7 @@ var _ = Describe("Workspaces", func() {
 			It("returns the error", func() {
 				spaces := workspaces.New(fakeTerraform)
 
-				_, err := spaces.LatestVersionForEnv("some-env")
+				_, err := spaces.LatestVersionForEnv("default", "some-env")
 				Expect(err).To(MatchError("some-error"))
 			})
 		})
@@ -91,7 +92,7 @@ var _ = Describe("Workspaces", func() {
 			It("returns the error", func() {
 				spaces := workspaces.New(fakeTerraform)
 
-				_, err := spaces.LatestVersionForEnv("some-env")
+				_, err := spaces.LatestVersionForEnv("default", "some-env")
 				Expect(err).To(MatchError("some-error"))
 			})
 		})

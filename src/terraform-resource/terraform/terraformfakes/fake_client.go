@@ -142,10 +142,11 @@ type FakeClient struct {
 		result1 string
 		result2 error
 	}
-	SavePlanToBackendStub        func(string) error
+	SavePlanToBackendStub        func(string, string) error
 	savePlanToBackendMutex       sync.RWMutex
 	savePlanToBackendArgsForCall []struct {
 		arg1 string
+		arg2 string
 	}
 	savePlanToBackendReturns struct {
 		result1 error
@@ -943,18 +944,19 @@ func (fake *FakeClient) PlanReturnsOnCall(i int, result1 string, result2 error) 
 	}{result1, result2}
 }
 
-func (fake *FakeClient) SavePlanToBackend(arg1 string) error {
+func (fake *FakeClient) SavePlanToBackend(arg1 string, arg2 string) error {
 	fake.savePlanToBackendMutex.Lock()
 	ret, specificReturn := fake.savePlanToBackendReturnsOnCall[len(fake.savePlanToBackendArgsForCall)]
 	fake.savePlanToBackendArgsForCall = append(fake.savePlanToBackendArgsForCall, struct {
 		arg1 string
-	}{arg1})
+		arg2 string
+	}{arg1, arg2})
 	stub := fake.SavePlanToBackendStub
 	fakeReturns := fake.savePlanToBackendReturns
-	fake.recordInvocation("SavePlanToBackend", []interface{}{arg1})
+	fake.recordInvocation("SavePlanToBackend", []interface{}{arg1, arg2})
 	fake.savePlanToBackendMutex.Unlock()
 	if stub != nil {
-		return stub(arg1)
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
@@ -968,17 +970,17 @@ func (fake *FakeClient) SavePlanToBackendCallCount() int {
 	return len(fake.savePlanToBackendArgsForCall)
 }
 
-func (fake *FakeClient) SavePlanToBackendCalls(stub func(string) error) {
+func (fake *FakeClient) SavePlanToBackendCalls(stub func(string, string) error) {
 	fake.savePlanToBackendMutex.Lock()
 	defer fake.savePlanToBackendMutex.Unlock()
 	fake.SavePlanToBackendStub = stub
 }
 
-func (fake *FakeClient) SavePlanToBackendArgsForCall(i int) string {
+func (fake *FakeClient) SavePlanToBackendArgsForCall(i int) (string, string) {
 	fake.savePlanToBackendMutex.RLock()
 	defer fake.savePlanToBackendMutex.RUnlock()
 	argsForCall := fake.savePlanToBackendArgsForCall[i]
-	return argsForCall.arg1
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeClient) SavePlanToBackendReturns(result1 error) {
