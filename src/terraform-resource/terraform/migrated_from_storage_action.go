@@ -220,6 +220,14 @@ func (a *MigratedFromStorageAction) Plan() (Result, error) {
 		err = fmt.Errorf("Plan Error: %s", err)
 	}
 
+	if err == nil && !a.Model.SkipPersistingPlan {
+		saveErr := a.savePlan()
+		if saveErr != nil {
+			a.Logger.Error("Failed To Save Terraform Plan!")
+			err = fmt.Errorf("Save Plan Error: %s", saveErr)
+		}
+	}
+
 	if err == nil {
 		a.Logger.Success("Successfully Ran Terraform Plan!")
 	}
@@ -275,15 +283,6 @@ func (a *MigratedFromStorageAction) attemptPlan() (Result, error) {
 		return Result{}, err
 	}
 
-	err = a.Client.JSONPlan()
-	if err != nil {
-		return Result{}, err
-	}
-
-	if err := a.Client.SavePlanToBackend(a.InitEnvName, a.planNameForEnv()); err != nil {
-		return Result{}, err
-	}
-
 	return Result{
 		Output: map[string]map[string]interface{}{},
 		Version: models.Version{
@@ -291,6 +290,19 @@ func (a *MigratedFromStorageAction) attemptPlan() (Result, error) {
 			PlanChecksum: planChecksum,
 		},
 	}, nil
+}
+
+func (a *MigratedFromStorageAction) savePlan() error {
+	err := a.Client.JSONPlan()
+	if err != nil {
+		return err
+	}
+
+	if err = a.Client.SavePlanToBackend(a.InitEnvName, a.planNameForEnv()); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (a *MigratedFromStorageAction) setup() error {

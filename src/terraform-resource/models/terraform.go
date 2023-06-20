@@ -15,6 +15,7 @@ type Terraform struct {
 	VarFiles              []string               `json:"var_files,omitempty"`             // optional
 	Env                   map[string]string      `json:"env,omitempty"`                   // optional
 	DeleteOnFailure       bool                   `json:"delete_on_failure,omitempty"`     // optional
+	SkipPersistingPlan    bool                   `json:"skip_persisting_plan,omitempty"`  // optional
 	PlanOnly              bool                   `json:"plan_only,omitempty"`             // optional
 	PlanRun               bool                   `json:"plan_run,omitempty"`              // optional
 	OutputModule          string                 `json:"output_module,omitempty"`         // optional
@@ -95,6 +96,10 @@ func (m Terraform) Merge(other Terraform) Terraform {
 
 	if other.PrivateKey != "" {
 		m.PrivateKey = other.PrivateKey
+	}
+
+	if other.SkipPersistingPlan {
+		m.SkipPersistingPlan = true
 	}
 
 	if other.PlanOnly {
